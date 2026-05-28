@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bozeman Offsite — Share Your Ideas</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sky:        #1b2d4f;
+      --sky-mid:    #2d4a6b;
+      --forest:     #3d5a3e;
+      --pine:       #2a3d1e;
+      --cream:      #f5e6c8;
+      --gold:       #c8813a;
+      --gold-light: #f5d78e;
+      --sage:       #a8b89a;
+      --bark:       #4a3820;
+      --card-bg:    rgba(26, 40, 26, 0.82);
+      --border:     rgba(200,175,130,0.18);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--pine);
+      color: var(--cream);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Background gradient + mountain */
+    .bg {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg,
+        var(--sky) 0%,
+        var(--sky-mid) 35%,
+        var(--forest) 65%,
+        var(--pine) 100%);
+      z-index: 0;
+    }
+
+    .mountains {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 200px;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Stars */
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 45%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle 3s infinite alternate;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.2; }
+      to   { opacity: 0.9; }
+    }
+
+    /* Layout */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--sage);
+      background: rgba(26,46,26,0.7);
+      border: 1px solid rgba(168,184,154,0.3);
+      padding: 4px 16px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      color: var(--cream);
+      text-shadow: 0 2px 16px rgba(0,0,0,0.5);
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .tagline {
+      color: var(--sage);
+      font-size: 0.92rem;
+      letter-spacing: 0.5px;
+    }
+
+    /* Submit card */
+    .submit-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 40px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    .submit-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--gold-light);
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .form-row.stacked {
+      flex-direction: column;
+    }
+
+    label {
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(200,175,130,0.25);
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: var(--cream);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      resize: vertical;
+    }
+
+    input[type="text"]::placeholder,
+    textarea::placeholder { color: rgba(245,230,200,0.3); }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: var(--gold);
+      background: rgba(255,255,255,0.09);
+    }
+
+    textarea { min-height: 90px; }
+
+    .submit-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #5a7a3a, #3d5a2a);
+      color: var(--cream);
+      border: 1px solid rgba(138,170,90,0.5);
+      padding: 12px 32px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      transition: transform 0.15s, background 0.2s, box-shadow 0.15s;
+      margin-top: 8px;
+    }
+
+    .submit-btn:hover {
+      background: linear-gradient(135deg, #6a8a4a, #4d6a3a);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    }
+
+    .submit-btn:active { transform: translateY(0); }
+
+    .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .toast {
+      display: none;
+      margin-top: 14px;
+      padding: 10px 16px;
+      background: rgba(90,122,58,0.3);
+      border: 1px solid rgba(138,170,90,0.4);
+      border-radius: 6px;
+      color: #b8d88a;
+      font-size: 0.88rem;
+    }
+
+    .toast.error {
+      background: rgba(122,58,58,0.3);
+      border-color: rgba(200,90,90,0.4);
+      color: #e8a0a0;
+    }
+
+    /* Ideas board */
+    .board-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .board-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--cream);
+    }
+
+    .count-badge {
+      background: rgba(200,129,58,0.2);
+      border: 1px solid rgba(200,129,58,0.4);
+      color: var(--gold);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 3px 12px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+    }
+
+    .sort-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .sort-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--sage);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .sort-btn.active,
+    .sort-btn:hover {
+      background: rgba(200,129,58,0.15);
+      border-color: rgba(200,129,58,0.4);
+      color: var(--gold-light);
+    }
+
+    .ideas-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .idea-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      animation: slideIn 0.35s ease;
+      transition: border-color 0.2s;
+    }
+
+    .idea-card:hover {
+      border-color: rgba(200,175,130,0.3);
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .upvote-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      min-width: 52px;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .upvote-btn:hover {
+      background: rgba(200,129,58,0.15);
+      border-color: rgba(200,129,58,0.5);
+    }
+
+    .upvote-btn.voted {
+      background: rgba(200,129,58,0.2);
+      border-color: var(--gold);
+    }
+
+    .upvote-btn .arrow {
+      font-size: 1rem;
+      line-height: 1;
+      color: var(--sage);
+      transition: color 0.2s;
+    }
+
+    .upvote-btn.voted .arrow,
+    .upvote-btn:hover .arrow { color: var(--gold); }
+
+    .upvote-btn .vote-count {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--cream);
+      line-height: 1;
+    }
+
+    .idea-body { flex: 1; min-width: 0; }
+
+    .idea-text {
+      font-size: 0.98rem;
+      color: var(--cream);
+      line-height: 1.55;
+      margin-bottom: 8px;
+      word-break: break-word;
+    }
+
+    .idea-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .idea-author {
+      font-size: 0.78rem;
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    .idea-time {
+      font-size: 0.75rem;
+      color: rgba(168,184,154,0.6);
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: rgba(168,184,154,0.3);
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: color 0.2s;
+      margin-left: auto;
+    }
+
+    .delete-btn:hover { color: rgba(220,100,100,0.7); }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--sage);
+    }
+
+    .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+    .empty-state p { font-size: 0.95rem; opacity: 0.7; }
+
+    /* Pulse indicator */
+    .live-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: var(--sage);
+      letter-spacing: 1px;
+    }
+
+    .live-dot::before {
+      content: '';
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      background: #6ab04c;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="stars" id="stars"></div>
+  <svg class="mountains" viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="0,200 0,140 80,75 160,115 260,40 340,88 420,22 500,72 580,8 660,58 720,30 780,62 860,10 940,52 1020,78 1100,32 1180,82 1260,44 1340,96 1440,66 1440,200" fill="#1a2e1a" opacity="0.95"/>
+    <polygon points="0,200 0,165 100,130 200,148 300,100 400,128 480,80 560,112 640,90 720,108 800,86 880,104 960,76 1040,108 1120,90 1200,118 1300,98 1380,128 1440,108 1440,200" fill="#152414" opacity="0.9"/>
+  </svg>
+
+  <div class="page">
+    <header>
+      <div class="eyebrow">Bozeman, Montana &middot; July Offsite</div>
+      <h1>&#x1F3D4; Share Your Ideas</h1>
+      <p class="tagline">What should we tackle at the offsite? Drop your ideas below and vote for your favorites.</p>
+    </header>
+
+    <!-- Submission form -->
+    <div class="submit-card">
+      <h2>&#x270F;&#xFE0F; Add an idea</h2>
+      <div class="form-row stacked">
+        <div>
+          <label for="idea-text">Your idea</label>
+          <textarea id="idea-text" placeholder="e.g. Align on Q3 priorities, revisit team norms, workshop our roadmap..." maxlength="400"></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div style="flex:1">
+          <label for="idea-author">Your name <span style="text-transform:none;font-size:0.72rem;color:rgba(168,184,154,0.5)">(optional)</span></label>
+          <input type="text" id="idea-author" placeholder="e.g. Alex Z." maxlength="60"/>
+        </div>
+      </div>
+      <button class="submit-btn" id="submitBtn" onclick="submitIdea()">
+        <span>&#x2B06;</span> Submit Idea
+      </button>
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <!-- Ideas board -->
+    <div class="board-header">
+      <h2>&#x1F4A1; Ideas Board</h2>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="live-dot">LIVE</span>
+        <span class="count-badge" id="countBadge">0 ideas</span>
+      </div>
+    </div>
+
+    <div class="sort-bar">
+      <button class="sort-btn active" id="sort-votes" onclick="setSort('votes')">&#x1F525; Top Voted</button>
+      <button class="sort-btn" id="sort-new" onclick="setSort('new')">&#x1F552; Newest</button>
+    </div>
+
+    <div class="ideas-grid" id="ideasGrid">
+      <div class="empty-state">
+        <div class="icon">&#x1F3D4;</div>
+        <p>No ideas yet — be the first to share one!</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Stars ---
+    const starsEl = document.getElementById('stars');
+    for (let i = 0; i < 70; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const size = Math.random() * 2.2 + 0.5;
+      s.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*3}s`;
+      starsEl.appendChild(s);
+    }
+
+    // --- State ---
+    let ideas = [];
+    let sortMode = 'votes';
+    const voted = new Set(JSON.parse(localStorage.getItem('voted') || '[]'));
+
+    function saveVoted() {
+      localStorage.setItem('voted', JSON.stringify([...voted]));
+    }
+
+    // --- Fetch & render ---
+    async function fetchIdeas() {
+      try {
+        const res = await fetch('/api/ideas');
+        ideas = await res.json();
+        renderIdeas();
+      } catch (e) {
+        // silently ignore network hiccups
+      }
+    }
+
+    function setSort(mode) {
+      sortMode = mode;
+      document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('sort-' + mode).classList.add('active');
+      renderIdeas();
+    }
+
+    function renderIdeas() {
+      const grid = document.getElementById('ideasGrid');
+      const badge = document.getElementById('countBadge');
+      badge.textContent = ideas.length + (ideas.length === 1 ? ' idea' : ' ideas');
+
+      if (ideas.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><div class="icon">&#x1F3D4;</div><p>No ideas yet — be the first to share one!</p></div>`;
+        return;
+      }
+
+      const sorted = [...ideas].sort((a, b) => {
+        if (sortMode === 'votes') {
+          if (b.votes !== a.votes) return b.votes - a.votes;
+          return b.id - a.id;
+        }
+        return b.id - a.id;
+      });
+
+      grid.innerHTML = sorted.map(idea => {
+        const hasVoted = voted.has(idea.id);
+        const timeAgo = relativeTime(idea.createdAt);
+        return `
+          <div class="idea-card" id="card-${idea.id}">
+            <button class="upvote-btn ${hasVoted ? 'voted' : ''}" onclick="upvote(${idea.id})" title="${hasVoted ? 'Already voted' : 'Upvote'}">
+              <span class="arrow">&#x25B2;</span>
+              <span class="vote-count">${idea.votes}</span>
+            </button>
+            <div class="idea-body">
+              <div class="idea-text">${escHtml(idea.text)}</div>
+              <div class="idea-meta">
+                <span class="idea-author">&#x1F9D1; ${escHtml(idea.author)}</span>
+                <span class="idea-time">${timeAgo}</span>
+                <button class="delete-btn" onclick="deleteIdea(${idea.id})" title="Remove">&#x2715;</button>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function relativeTime(iso) {
+      const diff = Math.floor((Date.now() - new Date(iso)) / 1000);
+      if (diff < 60) return 'just now';
+      if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+      if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+      return Math.floor(diff/86400) + 'd ago';
+    }
+
+    function escHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // --- Submit ---
+    async function submitIdea() {
+      const textEl = document.getElementById('idea-text');
+      const authorEl = document.getElementById('idea-author');
+      const btn = document.getElementById('submitBtn');
+      const toast = document.getElementById('toast');
+
+      const text = textEl.value.trim();
+      if (!text) {
+        showToast('Please enter an idea first.', true);
+        textEl.focus();
+        return;
+      }
+
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/ideas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, author: authorEl.value })
+        });
+        if (!res.ok) throw new Error('Server error');
+        textEl.value = '';
+        showToast('&#x2713; Idea submitted! Thanks.', false);
+        await fetchIdeas();
+      } catch (e) {
+        showToast('Could not submit — check your connection.', true);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function showToast(msg, isError) {
+      const t = document.getElementById('toast');
+      t.innerHTML = msg;
+      t.className = 'toast' + (isError ? ' error' : '');
+      t.style.display = 'block';
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.style.display = 'none', 3500);
+    }
+
+    // Allow Cmd/Ctrl+Enter to submit
+    document.getElementById('idea-text').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submitIdea();
+    });
+
+    // --- Upvote ---
+    async function upvote(id) {
+      if (voted.has(id)) return;
+      voted.add(id);
+      saveVoted();
+      // Optimistic update
+      const idea = ideas.find(i => i.id === id);
+      if (idea) idea.votes++;
+      renderIdeas();
+      try {
+        await fetch(`/api/ideas/${id}/upvote`, { method: 'POST' });
+        await fetchIdeas();
+      } catch (e) {
+        // keep optimistic
+      }
+    }
+
+    // --- Delete ---
+    async function deleteIdea(id) {
+      if (!confirm('Remove this idea?')) return;
+      try {
+        await fetch(`/api/ideas/${id}`, { method: 'DELETE' });
+        await fetchIdeas();
+      } catch (e) {}
+    }
+
+    // --- Poll for updates every 4 seconds ---
+    fetchIdeas();
+    setInterval(fetchIdeas, 4000);
+  </script>
+</body>
+</html>
